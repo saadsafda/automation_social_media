@@ -3,6 +3,7 @@ TikTok Comment Reply Bot — automates scanning & replying to comments
 on TikTok Studio's comment management page.
 """
 
+import random
 import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -21,7 +22,7 @@ from selenium.common.exceptions import (
 from loguru import logger
 
 from app.config import settings
-from app.browser import create_driver, safe_quit
+from app.browser import create_driver, safe_quit, human_delay, human_type
 from app.reply_generator import generate_reply
 
 
@@ -98,7 +99,7 @@ class TikTokCommentBot:
     def _navigate_to_comments(self):
         logger.info("Navigating to TikTok Studio comments page…")
         self.driver.get(settings.TIKTOK_COMMENT_URL)
-        time.sleep(5)
+        human_delay(4, 7)
 
     def _handle_login_if_needed(self):
         """Detect login page and authenticate via Google if needed."""
@@ -134,7 +135,7 @@ class TikTokCommentBot:
                 return
 
             google_btn.click()
-            time.sleep(3)
+            human_delay(2, 4)
 
             # Handle new window / popup for Google OAuth
             windows = self.driver.window_handles
@@ -146,18 +147,20 @@ class TikTokCommentBot:
                 EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='email']"))
             )
             email_input.clear()
-            email_input.send_keys(settings.TIKTOK_EMAIL)
+            human_type(email_input, settings.TIKTOK_EMAIL)
+            human_delay(0.5, 1.0)
             email_input.send_keys(Keys.ENTER)
-            time.sleep(3)
+            human_delay(2, 4)
 
             # Password
             pwd_input = self.wait.until(
                 EC.presence_of_element_located((By.CSS_SELECTOR, "input[type='password']"))
             )
             pwd_input.clear()
-            pwd_input.send_keys(settings.TIKTOK_PASSWORD)
+            human_type(pwd_input, settings.TIKTOK_PASSWORD)
+            human_delay(0.5, 1.0)
             pwd_input.send_keys(Keys.ENTER)
-            time.sleep(5)
+            human_delay(4, 7)
 
             # Switch back to main window
             if len(self.driver.window_handles) > 1:
@@ -165,7 +168,7 @@ class TikTokCommentBot:
 
             # Navigate back to comments
             self.driver.get(settings.TIKTOK_COMMENT_URL)
-            time.sleep(5)
+            human_delay(4, 7)
             logger.info("Login complete")
 
         except Exception as e:
@@ -175,7 +178,7 @@ class TikTokCommentBot:
     def _wait_for_comments_page(self):
         """Wait until the comments page is fully loaded."""
         logger.info("Waiting for comments page to load…")
-        time.sleep(5)
+        human_delay(4, 7)
 
         # Try to detect comments container via several possible selectors
         loaded = False
@@ -262,7 +265,7 @@ class TikTokCommentBot:
                 scroll_attempts = 0
 
             self._scroll_down()
-            time.sleep(2)
+            human_delay(1.5, 3.5)
 
         logger.info(
             f"Scan complete — total: {self.report.total_comments}, "
@@ -393,9 +396,9 @@ class TikTokCommentBot:
                 return False
 
             self.driver.execute_script("arguments[0].scrollIntoView({block:'center'});", reply_btn)
-            time.sleep(0.5)
+            human_delay(0.5, 1.2)
             reply_btn.click()
-            time.sleep(1.5)
+            human_delay(1.0, 2.5)
 
             # 2) Type into the reply input
             reply_input = None
@@ -420,9 +423,9 @@ class TikTokCommentBot:
                 return False
 
             reply_input.click()
-            time.sleep(0.3)
-            reply_input.send_keys(reply_text)
-            time.sleep(1)
+            human_delay(0.3, 0.8)
+            human_type(reply_input, reply_text)
+            human_delay(0.8, 1.5)
 
             # 3) Click the send button
             send_btn = None
@@ -450,7 +453,7 @@ class TikTokCommentBot:
                 # Fallback: press Enter
                 reply_input.send_keys(Keys.ENTER)
 
-            time.sleep(2)
+            human_delay(2, 4)
             logger.info("Reply sent successfully")
             return True
 
@@ -459,8 +462,9 @@ class TikTokCommentBot:
             return False
 
     def _scroll_down(self):
-        """Scroll the page / comments container to load more comments."""
-        self.driver.execute_script("window.scrollBy(0, 600);")
+        """Scroll the page with a random offset to mimic a human."""
+        scroll_px = random.randint(400, 800)
+        self.driver.execute_script(f"window.scrollBy(0, {scroll_px});")
 
 
 # ---------------------------------------------------------------------------

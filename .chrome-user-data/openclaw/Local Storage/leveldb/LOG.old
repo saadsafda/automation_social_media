@@ -1,2 +1,3 @@
-2026/03/16-00:11:52.062 5f58e Creating DB /Users/mac/automation_social_flow/.chrome-user-data/openclaw/Local Storage/leveldb since it was missing.
-2026/03/16-00:11:52.072 5f58e Reusing MANIFEST /Users/mac/automation_social_flow/.chrome-user-data/openclaw/Local Storage/leveldb/MANIFEST-000001
+2026/03/16-00:48:53.618 68b6a Reusing MANIFEST /Users/mac/automation_social_flow/.chrome-user-data/openclaw/Local Storage/leveldb/MANIFEST-000001
+2026/03/16-00:48:53.626 68b6a Recovering log #3
+2026/03/16-00:48:53.627 68b6a Reusing old log /Users/mac/automation_social_flow/.chrome-user-data/openclaw/Local Storage/leveldb/000003.log 

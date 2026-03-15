@@ -1,2 +1,3 @@
-2026/03/16-00:11:52.648 5f552 Creating DB /Users/mac/automation_social_flow/.chrome-user-data/openclaw/shared_proto_db since it was missing.
-2026/03/16-00:11:52.655 5f552 Reusing MANIFEST /Users/mac/automation_social_flow/.chrome-user-data/openclaw/shared_proto_db/MANIFEST-000001
+2026/03/16-00:48:54.200 68b36 Reusing MANIFEST /Users/mac/automation_social_flow/.chrome-user-data/openclaw/shared_proto_db/MANIFEST-000001
+2026/03/16-00:48:54.201 68b36 Recovering log #3
+2026/03/16-00:48:54.202 68b36 Reusing old log /Users/mac/automation_social_flow/.chrome-user-data/openclaw/shared_proto_db/000003.log 
