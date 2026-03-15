@@ -12,4 +12,5 @@ screenshots/
 logs/
 *.log
 
+# Chrome automation profile
 .chrome-user-data/
