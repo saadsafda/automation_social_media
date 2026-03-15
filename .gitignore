@@ -11,3 +11,5 @@ build/
 screenshots/
 logs/
 *.log
+
+.chrome-user-data/

@@ -22,7 +22,7 @@ from selenium.common.exceptions import (
 from loguru import logger
 
 from app.config import settings
-from app.browser import create_driver, safe_quit, human_delay, human_type, _is_using_system_profile, _system_chrome_user_data_dir
+from app.browser import create_driver, safe_quit, human_delay, human_type
 from app.reply_generator import generate_reply
 
 
@@ -105,31 +105,17 @@ class TikTokCommentBot:
         """Detect login page and authenticate via Google if needed."""
         current = self.driver.current_url
 
-        # When using the real Chrome profile, sessions/cookies are already
-        # present — if TikTok still redirects to login, it may just need a
-        # moment to load. Give it an extra wait before falling back to login.
-        user_data_dir = settings.CHROME_USER_DATA_DIR or ""
-        using_real = _is_using_system_profile(user_data_dir)
-
         if "login" in current.lower() or "passport" in current.lower():
-            if using_real:
-                logger.info(
-                    "Login page detected on real profile — "
-                    "waiting a bit for session cookies to kick in…"
-                )
-                human_delay(3, 5)
-                self.driver.get(settings.TIKTOK_COMMENT_URL)
-                human_delay(4, 7)
-                current = self.driver.current_url
-                if "login" not in current.lower() and "passport" not in current.lower():
-                    logger.info("✅ Session restored — no login needed")
-                    return
-                logger.warning(
-                    "Still on login page despite real profile. "
-                    "Your TikTok session may have expired — attempting Google login…"
-                )
-            else:
-                logger.info("Login page detected — attempting Google login…")
+            # The profile may have cookies — give it a second chance
+            logger.info("Login page detected — retrying in case session loads…")
+            human_delay(3, 5)
+            self.driver.get(settings.TIKTOK_COMMENT_URL)
+            human_delay(4, 7)
+            current = self.driver.current_url
+            if "login" not in current.lower() and "passport" not in current.lower():
+                logger.info("✅ Session restored — no login needed")
+                return
+            logger.info("Still on login page — attempting Google login…")
             self._google_login()
         else:
             logger.info("Already logged in (session cookie present)")
